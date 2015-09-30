@@ -16,7 +16,9 @@ import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
@@ -132,7 +134,7 @@ public class Chat extends CustomActivity{
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(message.getWindowToken(), 0);
 
-        String messagedata = message.getText().toString();
+        final String messagedata = message.getText().toString();
         final Conversation conversationNew = new Conversation(messagedata,UserList.user.getUsername(), new Date());
         conversationNew.setStatus(Conversation.STATUS_SENDING);
         conversationArrayList.add(conversationNew);
@@ -143,16 +145,30 @@ public class Chat extends CustomActivity{
         po.put("sender", UserList.user.getUsername());
         po.put("receiver", guest);
         po.put("message", messagedata);
+
         po.saveEventually(new SaveCallback() {
 
             @Override
-            public void done(ParseException e)
-            {
+            public void done(ParseException e) {
                 if (e == null)
                     conversationNew.setStatus(Conversation.STATUS_SENT);
                 else
                     conversationNew.setStatus(Conversation.STATUS_FAILED);
-               adapterconver.notifyDataSetChanged();
+                adapterconver.notifyDataSetChanged();
+            }
+        });
+        ParsePush.subscribeInBackground(guest, new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+
+                if (e == null) {
+                    ParsePush push = new ParsePush();
+                    push.setChannel(guest);
+                    push.setMessage(messagedata);
+                    push.sendInBackground();
+                } else {
+                    e.printStackTrace();
+                }
             }
         });
     }

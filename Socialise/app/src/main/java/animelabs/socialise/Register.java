@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -54,6 +55,9 @@ public class Register extends CustomActivity {
                     if(e==null)
                     {
                         UserList.user=parseUser;
+                        ParseInstallation parseInstallation=new ParseInstallation();
+                        parseInstallation.put("username",parseUser.getUsername());
+                        parseInstallation.saveInBackground();
                         startActivity(new Intent(Register.this,UserList.class));
                         setResult(RESULT_OK);
                         finish();

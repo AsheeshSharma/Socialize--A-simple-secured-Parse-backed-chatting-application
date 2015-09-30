@@ -53,10 +53,11 @@ public class Login extends CustomActivity {
                         public void done(ParseUser parseUser, ParseException e) {
                             if(parseUser!=null)
                             {   progressDialog.dismiss();
+                                UserList.user=parseUser;
                                 startActivity(new Intent(Login.this, UserList.class));
                             }
                             else
-                            {
+                            {   progressDialog.dismiss();
                                 Utils.showDialog(Login.this,getString(R.string.err_login) + " "+ e.getMessage());
                                 e.printStackTrace();
                             }

@@ -10,4 +10,5 @@
     android:textSize="@dimen/txt_18sp"
     android:drawableLeft="@drawable/ic_online"
     android:drawablePadding="@dimen/pad_10dp"
-    android:id="@+id/usertext" />
+    android:id="@+id/usertext"
+    android:background="@drawable/userbck" />

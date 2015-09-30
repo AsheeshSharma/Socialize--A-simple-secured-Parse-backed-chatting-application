@@ -11,7 +11,8 @@
             android:layout_height="wrap_content"
             android:divider="#ff459cff"
             android:dividerHeight="1dp"
-            tools:listitem="@layout/chat_item" >
+            tools:listitem="@layout/chat_item"
+         android:layout_marginTop="5dp">
         </ListView>
 
 </LinearLayout>

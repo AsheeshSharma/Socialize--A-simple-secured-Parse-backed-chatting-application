@@ -44,6 +44,7 @@ public class Chat extends CustomActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat);
+        conversationArrayList=new ArrayList<Conversation>();
         adapterconver=new ConversationAdapter();
         listView=(ListView)findViewById(R.id.list);
         listView.setAdapter(adapterconver);
@@ -51,17 +52,10 @@ public class Chat extends CustomActivity{
         listView.setStackFromBottom(true);
         message=(EditText)findViewById(R.id.txt);
         setTouchNClick(R.id.btnSend);
-        conversationArrayList=new ArrayList<Conversation>();
         guest = getIntent().getStringExtra(Const.EXTRA_DATA);
         getActionBar().setTitle(guest);
         handler = new android.os.Handler();
 
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isrunning=false;
     }
 
     @Override
@@ -70,9 +64,14 @@ public class Chat extends CustomActivity{
         isrunning=true;
         loadAllConversation();
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isrunning=false;
+    }
 
     private void loadAllConversation() {
-        ParseQuery<ParseObject> objectParseQuery=new ParseQuery<ParseObject>("Chat");
+        ParseQuery<ParseObject> objectParseQuery=ParseQuery.getQuery("Chat");
         if(conversationArrayList.size()==0)
         {
             ArrayList<String> dataset=new ArrayList<String>();
@@ -88,7 +87,7 @@ public class Chat extends CustomActivity{
             objectParseQuery.whereEqualTo("sender", guest);
             objectParseQuery.whereEqualTo("receiver", UserList.user.getUsername());
         }
-        objectParseQuery.orderByAscending("createdAt");
+        objectParseQuery.orderByDescending("createdAt");
         objectParseQuery.setLimit(20);
         objectParseQuery.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -120,7 +119,7 @@ public class Chat extends CustomActivity{
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        if(v.getId()==R.id.btnReg)
+        if(v.getId()==R.id.btnSend)
         {
             sendMessage();
         }
@@ -186,10 +185,10 @@ public class Chat extends CustomActivity{
             }
             TextView data=(TextView)convertView.findViewById(R.id.lbl2);
             data.setText(conversation.getMsg());
-            TextView datetextview=(TextView)findViewById(R.id.lbl1);
+            TextView datetextview=(TextView)convertView.findViewById(R.id.lbl1);
             datetextview.setText(DateUtils.getRelativeDateTimeString(Chat.this, conversation.getDate().getTime(), DateUtils.SECOND_IN_MILLIS,
                     DateUtils.DAY_IN_MILLIS, 0));
-            TextView statustextview=(TextView)findViewById(R.id.lbl3);
+            TextView statustextview=(TextView)convertView.findViewById(R.id.lbl3);
             if(conversation.isSent())
             {
                 if(conversation.getStatus()==Conversation.STATUS_SENT)

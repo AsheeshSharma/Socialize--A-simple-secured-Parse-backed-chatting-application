@@ -36,10 +36,6 @@ public class UserList extends CustomActivity {
         updateUserStatus(true);
     }
 
-    private void updateUserStatus(boolean b) {
-        user.put("online",b);
-        user.saveEventually();
-    }
 
     @Override
     protected void onDestroy() {
@@ -51,8 +47,14 @@ public class UserList extends CustomActivity {
     @Override
     protected void onResume() {
         super.onResume();
-       loadUserList();
+        loadUserList();
     }
+
+    private void updateUserStatus(boolean b) {
+        user.put("online", b);
+        user.saveEventually();
+    }
+
 
     private void loadUserList() {
         final ProgressDialog progressDialog=ProgressDialog.show(this,null,"Loading...");

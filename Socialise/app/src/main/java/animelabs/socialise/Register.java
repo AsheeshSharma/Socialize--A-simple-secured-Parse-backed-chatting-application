@@ -55,8 +55,8 @@ public class Register extends CustomActivity {
                     if(e==null)
                     {
                         UserList.user=parseUser;
-                        ParseInstallation parseInstallation=new ParseInstallation();
-                        parseInstallation.put("username",parseUser.getUsername());
+                        ParseInstallation parseInstallation=ParseInstallation.getCurrentInstallation();
+                        parseInstallation.put("username",UserList.user.getUsername());
                         parseInstallation.saveInBackground();
                         startActivity(new Intent(Register.this,UserList.class));
                         setResult(RESULT_OK);

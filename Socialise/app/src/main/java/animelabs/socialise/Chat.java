@@ -130,24 +130,19 @@ public class Chat extends CustomActivity{
     private void sendMessage() {
         if (message.length() == 0)
             return;
-
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(message.getWindowToken(), 0);
-
         final String messagedata = message.getText().toString();
         final Conversation conversationNew = new Conversation(messagedata,UserList.user.getUsername(), new Date());
         conversationNew.setStatus(Conversation.STATUS_SENDING);
         conversationArrayList.add(conversationNew);
         adapterconver.notifyDataSetChanged();
         message.setText(null);
-
         ParseObject po = new ParseObject("Chat");
         po.put("sender", UserList.user.getUsername());
         po.put("receiver", guest);
         po.put("message", messagedata);
-
         po.saveEventually(new SaveCallback() {
-
             @Override
             public void done(ParseException e) {
                 if (e == null)
@@ -157,20 +152,22 @@ public class Chat extends CustomActivity{
                 adapterconver.notifyDataSetChanged();
             }
         });
-        ParsePush.subscribeInBackground(guest, new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-
-                if (e == null) {
-                    ParsePush push = new ParsePush();
-                    push.setChannel(guest);
-                    push.setMessage(messagedata);
-                    push.sendInBackground();
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+//        ParsePush.subscribeInBackground(guest, new SaveCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//                if (e == null) {
+//                    ParsePush push = new ParsePush();
+//                    push.setChannel(guest);
+//                    push.setMessage(messagedata);
+//                    push.sendInBackground();
+//                } else {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+        ParseQuery parseQuer=ParseInstallation.getQuery();
+        parseQuer.whereEqualTo("username",guest);
+        ParsePush.sendMessageInBackground(messagedata,parseQuer);
     }
 
     private class ConversationAdapter extends BaseAdapter {
